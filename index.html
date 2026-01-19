@@ -1,464 +1,564 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Financeiro com Relatório PDF</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserva de Emergência – Simulador Avançado</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --color-nominal: #fb923c;
+      --color-real: #2563eb;
+      --color-meta: #16a34a;
+    }
+    * { box-sizing: border-box; }
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    header p {
+      margin: 8px 0 0;
+      opacity: 0.9;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.05);
+      margin-bottom: 30px;
+    }
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .input-group input,
+    .input-group select {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+    .actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    button.primary {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+    }
+    button.primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 8px 18px rgba(37,99,235,0.3);
+    }
+    button.secondary {
+      background: #f1f5f9;
+      color: #0f172a;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.08);
+    }
+    button.secondary:hover {
+      background: #e2e8f0;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .result-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+    }
+    .result-card h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+    }
+    .result-card p {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .nominal {
+      color: var(--color-nominal);
+    }
+    .real {
+      color: var(--color-real);
+    }
+    .meta {
+      color: var(--color-meta);
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: right;
+      white-space: nowrap;
+    }
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 600;
+    }
+    th:first-child, td:first-child {
+      text-align: left;
+    }
+    .meta-row { 
+      background: #f0fdf4; 
+      font-weight: bold; 
+      color: var(--color-meta); 
+    }
+    .educational-section { 
+      margin-top: 40px; 
+      padding: 20px; 
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 4px solid var(--color-real);
+    }
+    .educational-section p { 
+      line-height: 1.6; 
+      color: #475569; 
+    }
+    canvas {
+      margin-top: 30px;
+    }
 
-        h1, h2, h3 {
-            color: #333;
-        }
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .loading-overlay.show {
+      display: flex;
+    }
+    .loading-content {
+      background: white;
+      padding: 20px 28px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-            margin-right: 10px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .results {
-            margin-top: 30px;
-        }
-
-        .nominal {
-            color: orange;
-        }
-
-        .real {
-            color: #007bff;
-        }
-
-        .goal {
-            color: green;
-        }
-
-        canvas {
-            margin-top: 30px;
-        }
-
-        /* Loading overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .loading-content {
-            background: white;
-            padding: 20px 30px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        /* Modal de Prévia */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            background-color: rgba(0,0,0,0.6);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 40px auto;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 800px;
-            position: relative;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Estilos do relatório */
-        .pdf-container {
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
-
-        .pdf-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .pdf-section {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
-        }
-
-        .pdf-section h3 {
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
-        }
-
-        .pdf-summary-box {
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 6px;
-            background: #f9f9f9;
-            margin-bottom: 20px;
-        }
-
-        .pdf-legend span {
-            margin-right: 15px;
-            font-weight: bold;
-        }
-    </style>
+    /* Estilos do PDF */
+    .pdf-container {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #0f172a;
+      padding: 20px;
+    }
+    .pdf-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      text-align: left;
+    }
+    .pdf-header p {
+      margin: 5px 0;
+      font-size: 12px;
+      color: #64748b;
+    }
+    .pdf-section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+    .pdf-section h3 {
+      margin-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 4px;
+    }
+    .pdf-summary-box {
+      border: 1px solid #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+    .pdf-summary-box p {
+      margin: 6px 0;
+      font-size: 13px;
+    }
+    .pdf-concept p {
+      margin: 6px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #334155;
+    }
+    .pdf-legend span {
+      margin-right: 16px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Simulador Financeiro</h1>
+<header>
+  <h1>Reserva de Emergência</h1>
+  <p>Simulador avançado com análise nominal e real</p>
+</header>
 
-    <div class="form-group">
-        <label for="initialAmount">Valor Inicial (R$)</label>
-        <input type="number" id="initialAmount" value="10000">
+<main>
+
+  <div class="card">
+    <h2>Parâmetros da Simulação</h2>
+    <div class="grid">
+      <div class="input-group"><label>Saldo inicial (R$)</label><input id="saldoInput" type="number" value="10000"></div>
+      <div class="input-group"><label>Gasto mensal atual (R$)</label><input id="gastoInput" type="number" value="3000"></div>
+      <div class="input-group"><label>Meses de reserva</label><input id="mesesInput" type="number" value="6"></div>
+      <div class="input-group"><label>Aporte mensal (R$)</label><input id="aporteInput" type="number" value="500"></div>
+      <div class="input-group">
+        <label>Tipo de aporte</label>
+        <select id="tipoAporteInput">
+          <option value="nominal">Nominal (fixo)</option>
+          <option value="real">Real (corrigido pela inflação)</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Inflação anual (%)</label><input id="ipcaInput" type="number" value="4"></div>
+      <div class="input-group"><label>CDI / Selic anual (%)</label><input id="cdiInput" type="number" value="10"></div>
     </div>
 
-    <div class="form-group">
-        <label for="monthlyContribution">Aporte Mensal (R$)</label>
-        <input type="number" id="monthlyContribution" value="500">
+    <div class="actions">
+      <button class="primary" onclick="calcular()">Calcular</button>
+      <button class="secondary" onclick="gerarPDF()">📄 Gerar Relatório PDF</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Resultados</h2>
+    <div class="results-grid" id="resultadosResumo"></div>
+    <canvas id="grafico"></canvas>
+
+    <div class="table-wrapper">
+      <table id="tabelaResultados"></table>
     </div>
 
-    <div class="form-group">
-        <label for="annualReturn">Rentabilidade Anual (%)</label>
-        <input type="number" id="annualReturn" value="8">
+    <div class="educational-section">
+      <h3>Entendendo os Resultados</h3>
+      <p><strong>Saldo Nominal vs. Saldo Real:</strong> O saldo nominal representa o valor acumulado sem considerar a inflação, enquanto o saldo real ajusta esse valor para refletir o poder de compra ao longo do tempo.</p>
+      <p><strong>Aporte Nominal vs. Aporte Real:</strong> O aporte nominal é o valor fixo investido mensalmente. Já o aporte real ajusta o valor investido pela inflação, mantendo o poder de compra do investimento ao longo do tempo.</p>
+      <p><strong>Impacto de Choques Inflacionários:</strong> A inflação reduz o poder de compra do dinheiro. Choques inflacionários podem comprometer significativamente o valor real acumulado, mesmo com boas taxas de retorno nominal.</p>
     </div>
+  </div>
 
-    <div class="form-group">
-        <label for="inflationRate">Inflação Anual (%)</label>
-        <input type="number" id="inflationRate" value="4">
-    </div>
-
-    <div class="form-group">
-        <label for="years">Período (anos)</label>
-        <input type="number" id="years" value="20">
-    </div>
-
-    <div class="form-group">
-        <label for="goal">Meta Financeira (R$)</label>
-        <input type="number" id="goal" value="300000">
-    </div>
-
-    <button onclick="runSimulation()">Executar Simulação</button>
-
-    <div class="results" id="results"></div>
-
-    <canvas id="chart" width="800" height="400"></canvas>
-
-    <div style="margin-top:20px;">
-        <button onclick="openPreview()">👁️ Visualizar Relatório</button>
-        <button onclick="generatePDF()">📄 Gerar Relatório PDF</button>
-    </div>
-</div>
+</main>
 
 <!-- Loading Overlay -->
 <div class="loading-overlay" id="loading">
-    <div class="loading-content">⏳ Gerando relatório PDF...</div>
-</div>
-
-<!-- Modal de Prévia -->
-<div id="previewModal" class="modal">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closePreview()">×</span>
-        <div id="previewContent" class="pdf-container"></div>
-    </div>
+  <div class="loading-content">⏳ Gerando relatório PDF...</div>
 </div>
 
 <script>
-    let chart;
-    let simulationData = null;
+  let chart;
 
-    function runSimulation() {
-        const initialAmount = parseFloat(document.getElementById('initialAmount').value);
-        const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value);
-        const annualReturn = parseFloat(document.getElementById('annualReturn').value) / 100;
-        const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100;
-        const years = parseInt(document.getElementById('years').value);
-        const goal = parseFloat(document.getElementById('goal').value);
+  function calcular() {
+    const saldoInicial = parseFloat(document.getElementById('saldoInput').value) || 0;
+    const gastoMensal = parseFloat(document.getElementById('gastoInput').value) || 0;
+    const mesesReserva = parseInt(document.getElementById('mesesInput').value) || 0;
+    const aporteMensal = parseFloat(document.getElementById('aporteInput').value) || 0;
+    const tipoAporte = document.getElementById('tipoAporteInput').value;
+    const ipca = (parseFloat(document.getElementById('ipcaInput').value) || 0) / 100;
+    const cdi = (parseFloat(document.getElementById('cdiInput').value) || 0) / 100;
 
-        const months = years * 12;
-        const monthlyReturn = annualReturn / 12;
-        const monthlyInflation = inflationRate / 12;
+    const metaReserva = gastoMensal * mesesReserva;
+    const mesesSimulacao = 60;
 
-        let balanceNominal = initialAmount;
-        let balanceReal = initialAmount;
+    let saldoNominal = saldoInicial;
+    let saldoReal = saldoInicial;
+    let aporteAtual = aporteMensal;
 
-        const nominalValues = [];
-        const realValues = [];
-        const goalValues = [];
-        const labels = [];
+    const labels = [];
+    const valoresNominais = [];
+    const valoresReais = [];
+    const valoresMeta = [];
 
-        for (let i = 1; i <= months; i++) {
-            balanceNominal = balanceNominal * (1 + monthlyReturn) + monthlyContribution;
-            balanceReal = balanceReal * (1 + monthlyReturn - monthlyInflation) + monthlyContribution;
+    for (let i = 1; i <= mesesSimulacao; i++) {
+      const rendimentoMensal = cdi / 12;
+      const inflacaoMensal = ipca / 12;
 
-            nominalValues.push(balanceNominal.toFixed(2));
-            realValues.push(balanceReal.toFixed(2));
-            goalValues.push(goal.toFixed(2));
-            labels.push(`Mês ${i}`);
+      saldoNominal = saldoNominal * (1 + rendimentoMensal) + aporteAtual;
+      saldoReal = saldoReal * (1 + rendimentoMensal - inflacaoMensal) + aporteAtual;
+
+      if (tipoAporte === 'real') {
+        aporteAtual *= (1 + inflacaoMensal);
+      }
+
+      labels.push(`Mês ${i}`);
+      valoresNominais.push(saldoNominal.toFixed(2));
+      valoresReais.push(saldoReal.toFixed(2));
+      valoresMeta.push(metaReserva.toFixed(2));
+    }
+
+    atualizarResumo({
+      saldoInicial,
+      gastoMensal,
+      mesesReserva,
+      aporteMensal,
+      tipoAporte,
+      ipca: ipca * 100,
+      cdi: cdi * 100,
+      metaReserva,
+      saldoFinalNominal: saldoNominal,
+      saldoFinalReal: saldoReal
+    });
+
+    atualizarTabela(labels, valoresNominais, valoresReais, valoresMeta);
+    atualizarGrafico(labels, valoresNominais, valoresReais, valoresMeta);
+  }
+
+  function atualizarResumo(dados) {
+    const container = document.getElementById('resultadosResumo');
+    const atingiuMeta = dados.saldoFinalNominal >= dados.metaReserva;
+
+    container.innerHTML = `
+      <div class="result-card">
+        <h4>Meta de Reserva</h4>
+        <p class="meta">R$ ${dados.metaReserva.toFixed(2)}</p>
+      </div>
+      <div class="result-card">
+        <h4>Saldo Final Nominal</h4>
+        <p class="nominal">R$ ${dados.saldoFinalNominal.toFixed(2)}</p>
+      </div>
+      <div class="result-card">
+        <h4>Saldo Final Real</h4>
+        <p class="real">R$ ${dados.saldoFinalReal.toFixed(2)}</p>
+      </div>
+      <div class="result-card">
+        <h4>Status</h4>
+        <p class="${atingiuMeta ? 'meta' : 'nominal'}">
+          ${atingiuMeta ? 'Meta atingida' : 'Meta não atingida'}
+        </p>
+      </div>
+    `;
+  }
+
+  function atualizarTabela(labels, nominais, reais, metas) {
+    const tabela = document.getElementById('tabelaResultados');
+
+    let html = `
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th>Saldo Nominal (R$)</th>
+          <th>Saldo Real (R$)</th>
+          <th>Meta (R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    labels.forEach((label, index) => {
+      const classeMeta = parseFloat(nominais[index]) >= parseFloat(metas[index]) ? 'meta-row' : '';
+      html += `
+        <tr class="${classeMeta}">
+          <td>${label}</td>
+          <td>${nominais[index]}</td>
+          <td>${reais[index]}</td>
+          <td>${metas[index]}</td>
+        </tr>
+      `;
+    });
+
+    html += '</tbody>';
+    tabela.innerHTML = html;
+  }
+
+  function atualizarGrafico(labels, nominais, reais, metas) {
+    const ctx = document.getElementById('grafico').getContext('2d');
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Saldo Nominal',
+            data: nominais,
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-nominal'),
+            tension: 0.2,
+            fill: false
+          },
+          {
+            label: 'Saldo Real',
+            data: reais,
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-real'),
+            tension: 0.2,
+            fill: false
+          },
+          {
+            label: 'Meta',
+            data: metas,
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-meta'),
+            borderDash: [6, 4],
+            tension: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top'
+          }
         }
+      }
+    });
+  }
 
-        simulationData = {
-            initialAmount,
-            monthlyContribution,
-            annualReturn: annualReturn * 100,
-            inflationRate: inflationRate * 100,
-            years,
-            goal,
-            finalNominal: balanceNominal,
-            finalReal: balanceReal,
-            nominalValues,
-            realValues,
-            goalValues,
-            labels
-        };
+  /* ========= IMPLEMENTAÇÃO DO PDF (ÚNICA ALTERAÇÃO) ========= */
 
-        displayResults(simulationData);
-        renderChart(simulationData);
-    }
+  function gerarPDF() {
+    document.getElementById('loading').classList.add('show');
 
-    function displayResults(data) {
-        const resultsDiv = document.getElementById('results');
-        const reachedGoal = data.finalNominal >= data.goal;
+    const dataAtual = new Date().toLocaleDateString('pt-BR');
 
-        resultsDiv.innerHTML = `
-            <h2>Resultados</h2>
-            <p>Saldo Final <span class="nominal">Nominal</span>: <strong>R$ ${data.finalNominal.toFixed(2)}</strong></p>
-            <p>Saldo Final <span class="real">Real</span>: <strong>R$ ${data.finalReal.toFixed(2)}</strong></p>
-            <p class="${reachedGoal ? 'goal' : ''}">
-                ${reachedGoal ? 'Parabéns! Você atingiu sua meta financeira.' : 'Você não atingiu sua meta financeira neste cenário.'}
-            </p>
-        `;
-    }
+    const graficoImagem = chart ? chart.toBase64Image() : '';
 
-    function renderChart(data) {
-        const ctx = document.getElementById('chart').getContext('2d');
+    const resumoHTML = document.getElementById('resultadosResumo').innerHTML;
+    const tabelaHTML = document.getElementById('tabelaResultados').outerHTML;
 
-        if (chart) {
-            chart.destroy();
-        }
+    const pdfHTML = `
+      <div class="pdf-container">
+        <div class="pdf-header">
+          <h1>Relatório da Reserva de Emergência</h1>
+          <p>Data: ${dataAtual}</p>
+        </div>
 
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.labels,
-                datasets: [
-                    {
-                        label: 'Saldo Nominal',
-                        data: data.nominalValues,
-                        borderColor: 'orange',
-                        fill: false,
-                        tension: 0.2
-                    },
-                    {
-                        label: 'Saldo Real',
-                        data: data.realValues,
-                        borderColor: '#007bff',
-                        fill: false,
-                        tension: 0.2
-                    },
-                    {
-                        label: 'Meta Financeira',
-                        data: data.goalValues,
-                        borderColor: 'green',
-                        borderDash: [5, 5],
-                        fill: false
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true
-                    }
-                }
-            }
-        });
-    }
+        <div class="pdf-section">
+          <h3>Resumo da Simulação</h3>
+          <div class="pdf-summary-box">
+            ${resumoHTML}
+          </div>
+        </div>
 
-    function buildReportHTML() {
-        const reachedGoal = simulationData.finalNominal >= simulationData.goal;
+        <div class="pdf-section">
+          <h3>Gráfico de Evolução</h3>
+          <img src="${graficoImagem}" style="max-width:100%; border:1px solid #e2e8f0; border-radius:8px;" />
+          <div class="pdf-legend" style="margin-top:10px;">
+            <span class="nominal">🟧 Nominal</span>
+            <span class="real">🔵 Real</span>
+            <span class="meta">🟢 Meta</span>
+          </div>
+        </div>
 
-        return `
-            <div class="pdf-header">
-                <h1>Relatório da Simulação Financeira</h1>
-                <p>Data: ${new Date().toLocaleDateString()}</p>
-            </div>
+        <div class="pdf-section">
+          <h3>Detalhamento Mensal</h3>
+          ${tabelaHTML}
+        </div>
 
-            <div class="pdf-section">
-                <h3>Resumo da Simulação</h3>
-                <div class="pdf-summary-box">
-                    <p><strong>Valor Inicial:</strong> R$ ${simulationData.initialAmount.toFixed(2)}</p>
-                    <p><strong>Aporte Mensal:</strong> R$ ${simulationData.monthlyContribution.toFixed(2)}</p>
-                    <p><strong>Rentabilidade Anual:</strong> ${simulationData.annualReturn.toFixed(2)}%</p>
-                    <p><strong>Inflação Anual:</strong> ${simulationData.inflationRate.toFixed(2)}%</p>
-                    <p><strong>Período:</strong> ${simulationData.years} anos</p>
-                    <p><strong>Meta Financeira:</strong> R$ ${simulationData.goal.toFixed(2)}</p>
-                    <p><strong>Saldo Final Nominal:</strong> <span class="nominal">R$ ${simulationData.finalNominal.toFixed(2)}</span></p>
-                    <p><strong>Saldo Final Real:</strong> <span class="real">R$ ${simulationData.finalReal.toFixed(2)}</span></p>
-                </div>
-            </div>
+        <div class="pdf-section pdf-concept">
+          <h3>Conceitos Importantes</h3>
+          <p><strong>Saldo Nominal vs. Saldo Real:</strong> O saldo nominal representa o valor acumulado sem considerar a inflação. O saldo real ajusta esse valor para refletir o poder de compra ao longo do tempo.</p>
+          <p><strong>Aporte Nominal vs. Aporte Real:</strong> O aporte nominal é o valor fixo investido mensalmente. O aporte real ajusta esse valor pela inflação, preservando o poder de compra.</p>
+          <p><strong>Impacto de Choques Inflacionários:</strong> A inflação reduz o poder de compra do dinheiro. Choques inflacionários podem comprometer significativamente o valor real acumulado, mesmo com boas taxas de retorno nominal.</p>
+        </div>
+      </div>
+    `;
 
-            <div class="pdf-section">
-                <h3>Gráfico de Evolução Patrimonial</h3>
-                <img src="${chart.toBase64Image()}" style="max-width:100%; border:1px solid #ccc;" />
-                <div class="pdf-legend">
-                    <span class="nominal">🟧 Nominal</span>
-                    <span class="real">🔵 Real</span>
-                    <span class="goal">🟢 Meta</span>
-                </div>
-            </div>
+    const container = document.createElement('div');
+    container.innerHTML = pdfHTML;
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    document.body.appendChild(container);
 
-            <div class="pdf-section">
-                <h3>Saldo Nominal vs. Saldo Real</h3>
-                <p><span class="nominal">Saldo Nominal</span> representa o valor acumulado ao longo do tempo sem considerar o efeito da inflação. É o valor que aparece diretamente no extrato da conta.</p>
-                <p><span class="real">Saldo Real</span> ajusta o saldo nominal pela inflação, refletindo o verdadeiro poder de compra do dinheiro ao longo dos anos.</p>
-            </div>
+    const opt = {
+      margin: 12,
+      filename: 'Relatorio_Reserva_Emergencia.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-            <div class="pdf-section">
-                <h3>Aporte Nominal vs. Aporte Real</h3>
-                <p>O <span class="nominal">aporte nominal</span> é o valor efetivamente investido a cada período.</p>
-                <p>O <span class="real">aporte real</span> considera a perda do poder de compra causada pela inflação, mostrando quanto esse aporte realmente representa no futuro.</p>
-            </div>
+    html2pdf().set(opt).from(container).save().then(() => {
+      document.body.removeChild(container);
+      document.getElementById('loading').classList.remove('show');
+    }).catch(e => {
+      document.body.removeChild(container);
+      document.getElementById('loading').classList.remove('show');
+      console.error('Erro ao gerar PDF:', e);
+      alert('Erro ao gerar o PDF. Tente novamente.');
+    });
+  }
 
-            <div class="pdf-section">
-                <h3>Impacto de Choques Inflacionários</h3>
-                <p>Choques inflacionários reduzem significativamente o poder de compra ao longo do tempo. Mesmo com boas taxas de rentabilidade nominal, uma inflação elevada pode comprometer os resultados reais do investimento.</p>
-                <p>Planejar considerando cenários inflacionários ajuda a estabelecer metas mais realistas e estratégias mais robustas.</p>
-            </div>
-
-            <div class="pdf-section">
-                <h3>Interpretação do Gráfico</h3>
-                <p>O gráfico ilustra a evolução do patrimônio ao longo do tempo, comparando os valores <span class="nominal">nominais</span> e <span class="real">reais</span>, além da linha da <span class="goal">meta financeira</span>.</p>
-            </div>
-
-            <div class="pdf-section">
-                <h3>Conclusão</h3>
-                <p>
-                    ${reachedGoal
-                        ? 'Com base nos dados simulados, você atingiu sua meta financeira. Isso indica que sua estratégia atual de investimento é adequada, considerando tanto os valores nominais quanto o impacto da inflação.'
-                        : 'Com base nos dados simulados, você não atingiu sua meta financeira. Considere aumentar o aporte, estender o prazo ou buscar alternativas de investimento com maior rentabilidade real.'}
-                </p>
-            </div>
-        `;
-    }
-
-    function openPreview() {
-        if (!simulationData || !chart) {
-            alert('Por favor, execute a simulação antes de visualizar o relatório.');
-            return;
-        }
-
-        const previewContainer = document.getElementById('previewContent');
-        previewContainer.innerHTML = buildReportHTML();
-        document.getElementById('previewModal').style.display = 'block';
-    }
-
-    function closePreview() {
-        document.getElementById('previewModal').style.display = 'none';
-    }
-
-    function generatePDF() {
-        if (!simulationData || !chart) {
-            alert('Por favor, execute a simulação antes de gerar o relatório PDF.');
-            return;
-        }
-
-        document.getElementById('loading').classList.add('show');
-
-        const container = document.createElement('div');
-        container.innerHTML = buildReportHTML();
-        container.style.position = 'fixed';
-        container.style.left = '-9999px';
-        container.style.top = '0';
-        document.body.appendChild(container);
-
-        const opt = {
-            margin: 10,
-            filename: 'Relatorio_Simulacao_Financeira.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opt).from(container).save().then(() => {
-            document.body.removeChild(container);
-            document.getElementById('loading').classList.remove('show');
-            alert('✅ Relatório PDF gerado com sucesso!');
-        }).catch(() => {
-            document.body.removeChild(container);
-            document.getElementById('loading').classList.remove('show');
-            alert('❌ Ocorreu um erro ao gerar o PDF.');
-        });
-    }
+  window.addEventListener('load', () => {
+    calcular();
+  });
 </script>
 
 </body>
