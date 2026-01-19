@@ -14,169 +14,157 @@
     }
     * { box-sizing: border-box; }
     body { 
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f8fafc;
-      color: #0f172a;
-      margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: #f4f7fb; 
+      margin: 0; 
+      padding: 20px; 
+      color: #1e293b; 
     }
-    header {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: white;
-      padding: 24px 20px;
-      text-align: center;
+    .app { 
+      max-width: 1000px; 
+      margin: auto; 
+      background: #fff; 
+      padding: 30px; 
+      border-radius: 16px; 
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); 
     }
-    header h1 {
-      margin: 0;
+    h1 { 
+      text-align: center; 
+      color: #0f172a; 
+      margin-bottom: 30px; 
       font-size: 28px;
     }
-    header p {
-      margin: 8px 0 0;
-      opacity: 0.9;
+    h3 { 
+      color: #1e293b; 
+      margin-top: 30px; 
+      margin-bottom: 15px;
+      font-size: 18px;
     }
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 30px 20px;
-    }
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.05);
-      margin-bottom: 30px;
-    }
-    .card h2 {
-      margin-top: 0;
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+      gap: 20px; 
       margin-bottom: 20px;
-      font-size: 22px;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
+    .input-group { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
     }
-    .input-group {
+    label { 
+      font-size: 13px; 
+      font-weight: bold; 
+      color: #475569; 
+    }
+    input, select { 
+      padding: 10px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 8px; 
+      font-size: 14px; 
+      transition: border-color 0.2s; 
+    }
+    input:focus, select:focus { 
+      outline: none; 
+      border-color: var(--color-real); 
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    small { 
+      color: #64748b; 
+      font-size: 11px; 
+      line-height: 1.4; 
+    }
+    .button-group {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .input-group label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #334155;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .input-group small {
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 400;
-    }
-    .input-group input,
-    .input-group select {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .input-group input:focus,
-    .input-group select:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-    }
-    .actions {
-      margin-top: 24px;
-      display: flex;
-      gap: 12px;
+      gap: 10px;
+      margin-top: 20px;
       flex-wrap: wrap;
     }
-    button {
-      padding: 12px 18px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
+    button { 
+      padding: 14px 24px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      border: none; 
+      border-radius: 8px; 
+      transition: all 0.2s;
       font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease;
+      flex: 1;
+      min-width: 150px;
     }
-    button.primary {
-      background: #2563eb;
-      color: white;
-      box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+    .btn-primary { 
+      background: var(--color-real); 
+      color: white; 
     }
-    button.primary:hover {
+    .btn-primary:hover { 
       background: #1d4ed8;
-      box-shadow: 0 8px 18px rgba(37,99,235,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
-    button.secondary {
-      background: #f1f5f9;
-      color: #0f172a;
-      box-shadow: 0 4px 10px rgba(15,23,42,0.08);
-    }
-    button.secondary:hover {
-      background: #e2e8f0;
-    }
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-    .result-card {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 16px;
-      border: 1px solid #e2e8f0;
-    }
-    .result-card h4 {
-      margin: 0 0 6px;
-      font-size: 14px;
-      font-weight: 600;
+    .btn-secondary { 
+      background: #f1f5f9; 
       color: #475569;
     }
-    .result-card p {
-      margin: 0;
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .alert { 
+      background: #fff3cd; 
+      padding: 15px; 
+      border-radius: 10px; 
+      margin-top: 20px; 
+      border-left: 4px solid #f59e0b; 
+      font-size: 14px; 
+      color: #92400e;
+    }
+    .ok { 
+      background: #dcfce7; 
+      border-left-color: var(--color-meta); 
+      color: #166534; 
+    }
+    .reserva { 
+      background: #e0f2fe; 
+      padding: 20px; 
+      border-radius: 10px; 
+      margin-top: 20px; 
+      font-weight: bold; 
+      color: #0369a1; 
+      text-align: center; 
       font-size: 18px;
-      font-weight: 700;
-      color: #0f172a;
+      border-left: 4px solid var(--color-real);
     }
-    .nominal {
-      color: var(--color-nominal);
+    .chart-container { 
+      position: relative; 
+      background: #fff; 
+      padding: 20px; 
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-top: 30px;
     }
-    .real {
-      color: var(--color-real);
+    canvas { 
+      max-height: 400px;
     }
-    .meta {
-      color: var(--color-meta);
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 13px; 
+      margin-top: 30px;
+      border: 1px solid #e2e8f0;
     }
-    .table-wrapper {
-      overflow-x: auto;
-      margin-top: 20px;
+    th, td { 
+      border: 1px solid #e2e8f0; 
+      padding: 12px; 
+      text-align: right; 
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    th, td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: right;
-      white-space: nowrap;
-    }
-    th {
-      background: #f1f5f9;
-      color: #334155;
+    th { 
+      background: #f8fafc; 
+      color: #64748b; 
       font-weight: 600;
+      text-align: left;
     }
-    th:first-child, td:first-child {
+    td:first-child, th:first-child {
       text-align: left;
     }
     .meta-row { 
@@ -194,31 +182,104 @@
     .educational-section p { 
       line-height: 1.6; 
       color: #475569; 
+      font-size: 14px;
+      margin: 10px 0;
     }
-    canvas {
-      margin-top: 30px;
-    }
-
-    /* Loading overlay */
-    .loading-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.5);
+    
+    /* Estilos para o PDF */
+    .pdf-hidden {
       display: none;
-      align-items: center;
+      position: absolute;
+      left: -9999px;
+      width: 800px;
+      background: white;
+      padding: 40px;
+      font-family: Arial, sans-serif;
+      color: #1e293b;
+    }
+    .pdf-header {
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .pdf-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      text-align: left;
+    }
+    .pdf-header p {
+      margin: 5px 0;
+      font-size: 12px;
+      color: #64748b;
+    }
+    .pdf-concept {
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 8px;
+      page-break-inside: avoid;
+    }
+    .pdf-concept h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #1e293b;
+    }
+    .pdf-concept p {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #475569;
+    }
+    .pdf-summary {
+      background: #e0f2fe;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #0369a1;
+      text-align: center;
+      font-size: 14px;
+    }
+    .pdf-footer {
+      margin-top: 40px;
+      font-size: 10px;
+      color: #94a3b8;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+    }
+    .pdf-chart {
+      margin: 30px 0;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+    .pdf-chart img {
+      max-width: 100%;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
       justify-content: center;
-      z-index: 9999;
+      align-items: center;
     }
     .loading-overlay.show {
       display: flex;
     }
     .loading-content {
       background: white;
-      padding: 20px 28px;
-      border-radius: 14px;
-      font-weight: 600;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
       font-size: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      color: #1e293b;
     }
 
     /* Modal de Prévia */
@@ -226,165 +287,33 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15,23,42,0.6);
-      z-index: 10000;
-      overflow-y: auto;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000;
       padding: 40px 20px;
+      overflow-y: auto;
     }
-    .modal.show {
-      display: block;
-    }
+    .modal.show { display: block; }
     .modal-content {
       background: white;
       max-width: 900px;
-      margin: 0 auto;
+      margin: auto;
       padding: 30px;
       border-radius: 16px;
       position: relative;
     }
     .modal-close {
       position: absolute;
-      top: 16px;
+      top: 15px;
       right: 20px;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
       cursor: pointer;
       color: #64748b;
-    }
-
-    /* Estilos do PDF / Prévia */
-    .pdf-container {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #0f172a;
-      padding: 10px;
-    }
-    .pdf-header h1 {
-      margin: 0 0 10px 0;
-      font-size: 24px;
-    }
-    .pdf-header p {
-      margin: 5px 0;
-      font-size: 12px;
-      color: #64748b;
-    }
-    .pdf-section {
-      margin-bottom: 20px;
-      page-break-inside: avoid;
-    }
-    .pdf-section h3 {
-      margin-bottom: 8px;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 4px;
-    }
-    .pdf-summary-box {
-      border: 1px solid #e2e8f0;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: #f8fafc;
-    }
-    .pdf-summary-box p {
-      margin: 6px 0;
-      font-size: 13px;
-    }
-    .pdf-concept p {
-      margin: 6px 0;
-      font-size: 13px;
-      line-height: 1.5;
-      color: #334155;
-    }
-    .pdf-legend span {
-      margin-right: 16px;
-      font-weight: 600;
-      font-size: 13px;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Reserva de Emergência</h1>
-  <p>Simulador avançado com análise nominal e real</p>
-</header>
-
-<main>
-
-  <div class="card">
-    <h2>Parâmetros da Simulação</h2>
-    <div class="grid">
-      <div class="input-group">
-        <label>Saldo inicial (R$)
-          <small>Valor já disponível hoje para iniciar a reserva.</small>
-        </label>
-        <input id="saldoInput" type="number" value="10000">
-      </div>
-      <div class="input-group">
-        <label>Gasto mensal atual (R$)
-          <small>Média dos seus custos mensais essenciais.</small>
-        </label>
-        <input id="gastoInput" type="number" value="3000">
-      </div>
-      <div class="input-group">
-        <label>Meses de reserva
-          <small>Quantidade de meses que deseja cobrir com a reserva.</small>
-        </label>
-        <input id="mesesInput" type="number" value="6">
-      </div>
-      <div class="input-group">
-        <label>Aporte mensal (R$)
-          <small>Valor que você consegue investir mensalmente.</small>
-        </label>
-        <input id="aporteInput" type="number" value="500">
-      </div>
-      <div class="input-group">
-        <label>Tipo de aporte
-          <small>Escolha se o aporte será fixo ou corrigido pela inflação.</small>
-        </label>
-        <select id="tipoAporteInput">
-          <option value="nominal">Nominal (fixo)</option>
-          <option value="real">Real (corrigido pela inflação)</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>Inflação anual (%)
-          <small>Estimativa média de inflação (ex: IPCA).</small>
-        </label>
-        <input id="ipcaInput" type="number" value="4">
-      </div>
-      <div class="input-group">
-        <label>CDI / Selic anual (%)
-          <small>Taxa de rendimento anual do investimento.</small>
-        </label>
-        <input id="cdiInput" type="number" value="10">
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="primary" onclick="calcular()">Calcular</button>
-      <button class="secondary" onclick="abrirPrevia()">👁️ Pré-visualizar Relatório</button>
-      <button class="secondary" onclick="gerarPDF()">📄 Gerar Relatório PDF</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Resultados</h2>
-    <div class="results-grid" id="resultadosResumo"></div>
-    <canvas id="grafico"></canvas>
-
-    <div class="table-wrapper">
-      <table id="tabelaResultados"></table>
-    </div>
-
-    <div class="educational-section">
-      <h3>Entendendo os Resultados</h3>
-      <p><strong>Saldo Nominal vs. Saldo Real:</strong> O saldo nominal representa o valor acumulado sem considerar a inflação, enquanto o saldo real ajusta esse valor para refletir o poder de compra ao longo do tempo.</p>
-      <p><strong>Aporte Nominal vs. Aporte Real:</strong> O aporte nominal é o valor fixo investido mensalmente. Já o aporte real ajusta o valor investido pela inflação, mantendo o poder de compra do investimento ao longo do tempo.</p>
-      <p><strong>Impacto de Choques Inflacionários:</strong> A inflação reduz o poder de compra do dinheiro. Choques inflacionários podem comprometer significativamente o valor real acumulado, mesmo com boas taxas de retorno nominal.</p>
-    </div>
-  </div>
-
-</main>
-
-<!-- Loading Overlay -->
 <div class="loading-overlay" id="loading">
   <div class="loading-content">⏳ Gerando relatório PDF...</div>
 </div>
@@ -397,127 +326,246 @@
   </div>
 </div>
 
+<div class="app" id="main-app">
+  <h1>🛡 Simulador de Reserva de Emergência</h1>
+
+  <div class="educational-section" style="margin-top: 20px; margin-bottom: 30px;">
+    <h3>📖 Como Usar Este Simulador</h3>
+    <p>Esta ferramenta ajuda você a entender se sua reserva de emergência é suficiente. Você pode testar diferentes cenários, incluindo situações de crise onde a inflação sobe e sua renda cai.</p>
+    <p><strong>Comece preenchendo os valores básicos:</strong> seu saldo atual, gastos mensais e quanto você consegue poupar. Depois, explore os cenários de crise para ver como sua reserva se comporta em momentos difíceis.</p>
+  </div>
+
+  <div class="grid">
+    <div class="input-group"><label>Saldo inicial (R$)</label><input id="saldoInput" type="number" value="10000"></div>
+    <div class="input-group"><label>Gasto mensal atual (R$)</label><input id="gastoInput" type="number" value="3000"></div>
+    <div class="input-group"><label>Meses de reserva</label><input id="mesesInput" type="number" value="6"></div>
+    <div class="input-group"><label>Aporte mensal (R$)</label><input id="aporteInput" type="number" value="500"></div>
+    <div class="input-group">
+      <label>Tipo de aporte</label>
+      <select id="tipoAporteInput">
+        <option value="nominal">Nominal (fixo)</option>
+        <option value="real">Real (corrigido pela inflação)</option>
+      </select>
+    </div>
+    <div class="input-group"><label>Inflação anual (%)</label><input id="ipcaInput" type="number" value="4"></div>
+    <div class="input-group"><label>CDI / Selic anual (%)</label><input id="cdiInput" type="number" value="10"></div>
+    <div class="input-group">
+      <label>Choque inflacionário (%)</label>
+      <input id="choqueInput" type="number" value="12">
+      <small>Inflação excepcional (ex.: crises).</small>
+    </div>
+    <div class="input-group">
+      <label>Duração do choque (meses)</label>
+      <input id="choqueMesesInput" type="number" value="6">
+      <small>Meses de inflação elevada.</small>
+    </div>
+    <div class="input-group">
+      <label>Perda de renda</label>
+      <select id="perdaInput">
+        <option value="0">Nenhuma</option>
+        <option value="0.5">Parcial (50%)</option>
+        <option value="1">Total</option>
+      </select>
+      <small>Redução de aporte na emergência.</small>
+    </div>
+    <div class="input-group">
+      <label>Mostrar +6 meses após meta</label>
+      <select id="extraMeses">
+        <option value="0">Não</option>
+        <option value="6">Sim</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="educational-section" style="margin-top: 30px; margin-bottom: 20px; background: #fef3c7; border-left-color: #f59e0b;">
+    <h3>⚡ Entenda os Parâmetros de Crise</h3>
+    
+    <p><strong>🔥 Choque Inflacionário (%):</strong> É um aumento excepcional de preços acima da inflação normal. Exemplo: se a inflação normal é 4% ao ano, um choque inflacionário pode ser 12% ou mais. Isso acontece em crises econômicas, desvalorização da moeda, ou falta de produtos no mercado. Quando há choque, tudo fica mais caro de repente: alimentos, gasolina, energia.</p>
+    
+    <p><strong>📅 Duração do Choque (meses):</strong> Por quanto tempo essa inflação alta vai durar? Em uma crise típica, pode durar 6 a 12 meses até as coisas normalizarem. Exemplo: em 2020, durante a pandemia, muitos países tiveram inflação elevada por vários meses. Este campo mostra quantos meses você quer simular com essa inflação alta, e depois volta ao normal.</p>
+    
+    <p><strong>📋 Perda de Renda:</strong> Em crises, as pessoas frequentemente perdem renda. Pode ser desemprego total, redução de horas de trabalho, ou corte de bônus. Este campo simula isso. Se você escolher "Parcial (50%)", significa que sua capacidade de poupar cai pela metade durante a crise. Se escolher "Total", significa que você não consegue poupar nada durante a crise e precisa viver apenas da sua reserva.</p>
+    
+    <p><strong>Por que simular tudo isso junto?</strong> Porque crises reais funcionam assim: tudo fica mais caro E você ganha menos dinheiro ao mesmo tempo. É o pior cenário possível. Se sua reserva aguenta isso, você está realmente seguro.</p>
+  </div>
+
+  <div class="button-group">
+    <button class="btn-primary" onclick="calcular()">Simular Cenário</button>
+    <button class="btn-secondary" onclick="abrirPrevia()">👁️ Pré-visualizar Relatório</button>
+    <button class="btn-secondary" onclick="exportarPDF()">📄 Gerar Relatório PDF</button>
+  </div>
+
+  <div id="reservaValor" class="reserva" style="display:none"></div>
+  <div id="alerta" class="alert" style="display:none"></div>
+  <div id="meta" class="alert ok" style="display:none"></div>
+
+  <div class="chart-container">
+    <h3>📊 Evolução do Poder de Compra</h3>
+    <p style="font-size: 12px; color: #64748b; margin: 0 0 15px 0;">
+      <span style="color: var(--color-nominal); font-weight: bold;">- - -</span> Saldo Nominal (Ilusão) | 
+      <span style="color: var(--color-real); font-weight: bold;">───</span> Saldo Real (Realidade)
+    </p>
+    <canvas id="grafico"></canvas>
+  </div>
+
+  <div class="educational-section">
+    <h3>📚 Conceitos Fundamentais</h3>
+    <p><strong>Saldo Nominal vs. Real:</strong> O saldo nominal é o número que você vê na conta. O saldo real é o que esse dinheiro realmente compra. Se o seu saldo cresce 10% mas a inflação foi 12%, você ficou mais pobre apesar de ter "mais dinheiro".</p>
+    <p><strong>Aporte Nominal vs. Real:</strong> Manter um aporte fixo (nominal) de R$ 500 por 5 anos é um erro comum. Devido à inflação, esses R$ 500 comprarão muito menos no futuro, reduzindo seu esforço de poupança real sem você perceber.</p>
+    <p><strong>Reserva de Emergência:</strong> É o dinheiro que você guarda para situações inesperadas (desemprego, doença, crise). O objetivo é ter poder de compra real suficiente para viver alguns meses sem renda.</p>
+  </div>
+
+  <h3>📋 Tabela de Evolução</h3>
+  <table id="tabela"></table>
+</div>
+
+<!-- Template para o PDF -->
+<div id="pdf-content" class="pdf-hidden">
+  <div class="pdf-header">
+    <h1>Relatório Educativo: Reserva de Emergência</h1>
+    <p id="pdf-date"></p>
+    <p id="pdf-params"></p>
+  </div>
+  
+  <div class="pdf-summary" id="pdf-summary"></div>
+
+  <div class="pdf-chart">
+    <h3>📊 Evolução da Reserva</h3>
+    <img id="pdf-chart-img" src="" alt="Gráfico da simulação" />
+    <p style="font-size:12px; margin-top:10px;">
+      <span style="color:#fb923c; font-weight:bold;">Laranja tracejado:</span> Saldo Nominal | 
+      <span style="color:#2563eb; font-weight:bold;">Azul contínuo:</span> Saldo Real | 
+      <span style="color:#16a34a; font-weight:bold;">Verde:</span> Meta
+    </p>
+  </div>
+  
+  <div class="pdf-concept">
+    <h3>🧠 Saldo Nominal (O que você vê) × Saldo Real (O que você tem)</h3>
+    <p>Imagine que você tem R$ 10.000 na conta. Esse é o <strong>saldo nominal</strong> — o número que aparece no seu banco. Mas será que esses R$ 10.000 compram o mesmo que compravam há um ano?</p>
+    <p>A resposta é <strong>não</strong>. Por causa da inflação, o dinheiro perde valor com o tempo. O <strong>saldo real</strong> mostra quanto seu dinheiro realmente vale em termos de compra. Se a inflação foi de 20% em um ano, aqueles R$ 10.000 agora compram apenas o equivalente a R$ 8.333.</p>
+    <p><strong>Resumindo:</strong> A linha azul no gráfico (Saldo Real) é o número que realmente importa. Ela mostra se você está realmente seguro ou apenas tendo a ilusão de estar.</p>
+  </div>
+
+  <div class="pdf-concept">
+    <h3>💸 Por que sua poupança mensal pode estar enfraquecendo</h3>
+    <p>Você decide poupar R$ 500 por mês. Ótimo! Mas aqui está o problema: se você sempre poupa exatamente R$ 500, sem aumentar esse valor, a inflação está trabalhando contra você.</p>
+    <p>Exemplo real: Hoje, R$ 500 compram uma cesta de compras. Daqui a 5 anos, com inflação de 4% ao ano, aqueles mesmos R$ 500 comprarão apenas o equivalente a R$ 410. Seu esforço de poupança ficou mais fraco sem você perceber!</p>
+    <p><strong>A solução:</strong> Aumentar o aporte junto com a inflação. Se a inflação sobe 4% ao ano, você também deveria aumentar sua poupança em 4% ao ano. Assim, seu esforço real permanece o mesmo.</p>
+  </div>
+
+  <div class="pdf-concept">
+    <h3>⚡ O Cenário do Pior Caso: Crise + Desemprego</h3>
+    <p>Às vezes, a vida nos coloca em situações extremas. Uma crise econômica pode trazer <strong>inflação muito alta</strong> (tudo fica mais caro) <strong>E</strong> você pode perder sua renda (desemprego, redução de salário).</p>
+    <p><strong>Exemplo:</strong> Imagine que a inflação suba para <span id="pdf-choque-val"></span>% durante <span id="pdf-choque-meses"></span> meses, e você perca 50% da sua renda. Nessa situação, você não consegue poupar mais, e o dinheiro que tem perde valor rapidamente. É exatamente para isso que existe a reserva de emergência.</p>
+    <p><strong>O objetivo da simulação:</strong> Mostrar se sua reserva é suficiente para sobreviver a um período assim. Se ela não for, você sabe que precisa poupar mais.</p>
+  </div>
+
+  <div class="pdf-concept">
+    <h3>📊 Entendendo o Gráfico</h3>
+    <p><strong>Linha Laranja Tracejada (Saldo Nominal):</strong> É o número que você vê no banco. Sobe bastante, mas é uma ilusão — não leva em conta a inflação.</p>
+    <p><strong>Linha Azul Contínua (Saldo Real):</strong> É o que realmente importa. Mostra quanto poder de compra você realmente tem depois de descontar a inflação. Se essa linha não atingir a meta, você não está realmente seguro.</p>
+    <p><strong>Ponto Verde (Meta Atingida):</strong> Marca o mês em que você finalmente tem uma reserva real suficiente para enfrentar uma emergência. Antes desse ponto, você ainda está vulnerável.</p>
+  </div>
+
+  <div class="pdf-concept" style="background: #fff; border: 1px solid #e2e8f0;">
+    <h3>✅ O Que Você Aprendeu com Esta Simulação</h3>
+    <p>Esta ferramenta foi criada para você entender que <strong>guardar dinheiro não é apenas sobre ter um número grande na conta</strong>. É sobre ter poder de compra real.</p>
+    <p>Muitas pessoas acham que estão seguras porque veem seus saldos crescerem. Mas se a inflação está comendo esse crescimento, elas podem estar em perigo sem perceber. A simulação mostra exatamente isso.</p>
+    <p><strong>Resultado da sua simulação:</strong> <span id="pdf-conclusao"></span></p>
+  </div>
+
+  <div class="pdf-footer">
+    Simulador de Reserva de Emergência - Documento Educativo para Planejamento Financeiro<br>
+    Gerado em: <span id="pdf-footer-date"></span>
+  </div>
+</div>
+
 <script>
-  let chart;
+'use strict';
 
-  function calcular() {
-    const saldoInicial = parseFloat(document.getElementById('saldoInput').value) || 0;
-    const gastoMensal = parseFloat(document.getElementById('gastoInput').value) || 0;
-    const mesesReserva = parseInt(document.getElementById('mesesInput').value) || 0;
-    const aporteMensal = parseFloat(document.getElementById('aporteInput').value) || 0;
-    const tipoAporte = document.getElementById('tipoAporteInput').value;
-    const ipca = (parseFloat(document.getElementById('ipcaInput').value) || 0) / 100;
-    const cdi = (parseFloat(document.getElementById('cdiInput').value) || 0) / 100;
+let chart;
+let ultimosDados = {};
 
-    const metaReserva = gastoMensal * mesesReserva;
-    const mesesSimulacao = 60;
+const moeda = v => isFinite(v)
+  ? v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+  : '—';
 
-    let saldoNominal = saldoInicial;
-    let saldoReal = saldoInicial;
-    let aporteAtual = aporteMensal;
+function calcular() {
+  try {
+    const saldoInicial = Number(document.getElementById('saldoInput')?.value) || 0;
+    const gastoBase = Number(document.getElementById('gastoInput')?.value) || 0;
+    const mesesReserva = Number(document.getElementById('mesesInput')?.value) || 0;
+    const aporteBase = Number(document.getElementById('aporteInput')?.value) || 0;
+    const tipoAporte = document.getElementById('tipoAporteInput')?.value || 'nominal';
+    const ipcaAnual = (Number(document.getElementById('ipcaInput')?.value) || 0) / 100;
+    const cdiAnual = (Number(document.getElementById('cdiInput')?.value) || 0) / 100;
+    const choqueAnual = (Number(document.getElementById('choqueInput')?.value) || 0) / 100;
+    const choqueMeses = Number(document.getElementById('choqueMesesInput')?.value) || 0;
+    const perda = Number(document.getElementById('perdaInput')?.value) || 0;
+    const extraMeses = Number(document.getElementById('extraMeses')?.value) || 0;
 
-    const labels = [];
-    const valoresNominais = [];
-    const valoresReais = [];
-    const valoresMeta = [];
+    const ipca = ipcaAnual / 12;
+    const cdi = cdiAnual / 12;
+    const choque = choqueAnual / 12;
 
-    for (let i = 1; i <= mesesSimulacao; i++) {
-      const rendimentoMensal = cdi / 12;
-      const inflacaoMensal = ipca / 12;
+    let saldoAtual = saldoInicial;
+    let reservaNecessaria = 0;
+    let labels = [], saldoNominal = [], saldoReal = [];
+    let metaMes = null;
+    let inflacaoAcumulada = 1;
 
-      saldoNominal = saldoNominal * (1 + rendimentoMensal) + aporteAtual;
-      saldoReal = saldoReal * (1 + rendimentoMensal - inflacaoMensal) + aporteAtual;
+    let tabelaHTML = '<tr><th>Mês</th><th>Gasto corrigido</th><th>Saldo nominal</th><th>Saldo real</th></tr>';
 
-      if (tipoAporte === 'real') {
-        aporteAtual *= (1 + inflacaoMensal);
+    let i = 1;
+    const LIMITE = 180;
+
+    while (i <= LIMITE) {
+      const inflacaoMes = i <= choqueMeses ? choque : ipca;
+      inflacaoAcumulada *= (1 + inflacaoMes);
+
+      const gastoCorrigido = gastoBase * inflacaoAcumulada;
+      if (i <= mesesReserva) reservaNecessaria += gastoCorrigido;
+
+      let aporteMes = aporteBase;
+      if (tipoAporte === 'real') aporteMes *= inflacaoAcumulada;
+      if (perda > 0 && i <= mesesReserva) aporteMes *= (1 - perda);
+
+      saldoAtual = saldoAtual * (1 + cdi) + aporteMes;
+      const saldoRealMes = saldoAtual / inflacaoAcumulada;
+
+      labels.push(i);
+      saldoNominal.push(saldoAtual);
+      saldoReal.push(saldoRealMes);
+
+      const metaClass = (metaMes === null && saldoRealMes >= reservaNecessaria) ? 'meta-row' : '';
+      tabelaHTML += `<tr class="${metaClass}"><td>${i}</td><td>${moeda(gastoCorrigido)}</td><td>${moeda(saldoAtual)}</td><td>${moeda(saldoRealMes)}</td></tr>`;
+
+      if (metaMes === null && saldoRealMes >= reservaNecessaria) {
+        metaMes = i;
+        if (extraMeses === 0) break;
       }
-
-      labels.push(`Mês ${i}`);
-      valoresNominais.push(saldoNominal.toFixed(2));
-      valoresReais.push(saldoReal.toFixed(2));
-      valoresMeta.push(metaReserva.toFixed(2));
+      if (metaMes !== null && i >= metaMes + extraMeses) break;
+      i++;
     }
 
-    atualizarResumo({
-      saldoInicial,
-      gastoMensal,
-      mesesReserva,
-      aporteMensal,
+    ultimosDados = {
+      metaMes,
+      reservaNecessaria,
       tipoAporte,
-      ipca: ipca * 100,
-      cdi: cdi * 100,
-      metaReserva,
-      saldoFinalNominal: saldoNominal,
-      saldoFinalReal: saldoReal
-    });
+      choque: document.getElementById('choqueInput').value,
+      choqueMeses: document.getElementById('choqueMesesInput').value,
+      saldoNominal,
+      saldoReal,
+      labels
+    };
 
-    atualizarTabela(labels, valoresNominais, valoresReais, valoresMeta);
-    atualizarGrafico(labels, valoresNominais, valoresReais, valoresMeta);
-  }
+    document.getElementById('tabela').innerHTML = tabelaHTML;
+    const rv = document.getElementById('reservaValor');
+    rv.style.display = 'block';
+    rv.innerText = `💰 Valor da reserva necessária: ${moeda(reservaNecessaria)}`;
 
-  function atualizarResumo(dados) {
-    const container = document.getElementById('resultadosResumo');
-    const atingiuMeta = dados.saldoFinalNominal >= dados.metaReserva;
-
-    container.innerHTML = `
-      <div class="result-card">
-        <h4>Meta de Reserva</h4>
-        <p class="meta">R$ ${dados.metaReserva.toFixed(2)}</p>
-      </div>
-      <div class="result-card">
-        <h4>Saldo Final Nominal</h4>
-        <p class="nominal">R$ ${dados.saldoFinalNominal.toFixed(2)}</p>
-      </div>
-      <div class="result-card">
-        <h4>Saldo Final Real</h4>
-        <p class="real">R$ ${dados.saldoFinalReal.toFixed(2)}</p>
-      </div>
-      <div class="result-card">
-        <h4>Status</h4>
-        <p class="${atingiuMeta ? 'meta' : 'nominal'}">
-          ${atingiuMeta ? 'Meta atingida' : 'Meta não atingida'}
-        </p>
-      </div>
-    `;
-  }
-
-  function atualizarTabela(labels, nominais, reais, metas) {
-    const tabela = document.getElementById('tabelaResultados');
-
-    let html = `
-      <thead>
-        <tr>
-          <th>Mês</th>
-          <th>Saldo Nominal (R$)</th>
-          <th>Saldo Real (R$)</th>
-          <th>Meta (R$)</th>
-        </tr>
-      </thead>
-      <tbody>
-    `;
-
-    labels.forEach((label, index) => {
-      const classeMeta = parseFloat(nominais[index]) >= parseFloat(metas[index]) ? 'meta-row' : '';
-      html += `
-        <tr class="${classeMeta}">
-          <td>${label}</td>
-          <td>${nominais[index]}</td>
-          <td>${reais[index]}</td>
-          <td>${metas[index]}</td>
-        </tr>
-      `;
-    });
-
-    html += '</tbody>';
-    tabela.innerHTML = html;
-  }
-
-  function atualizarGrafico(labels, nominais, reais, metas) {
-    const ctx = document.getElementById('grafico').getContext('2d');
-
-    if (chart) {
-      chart.destroy();
-    }
+    const ctx = document.getElementById('grafico');
+    if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
       type: 'line',
@@ -525,140 +573,148 @@
         labels,
         datasets: [
           {
-            label: 'Saldo Nominal',
-            data: nominais,
-            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-nominal'),
-            tension: 0.2,
-            fill: false
+            label: 'Saldo nominal (ilusão)',
+            data: saldoNominal,
+            borderColor: '#fb923c',
+            backgroundColor: 'rgba(251, 146, 60, 0.05)',
+            borderDash: [6, 6],
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            tension: 0.3
           },
           {
-            label: 'Saldo Real',
-            data: reais,
-            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-real'),
-            tension: 0.2,
-            fill: false
+            label: 'Saldo real (realidade)',
+            data: saldoReal,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.05)',
+            borderWidth: 3,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            tension: 0.3
           },
-          {
-            label: 'Meta',
-            data: metas,
-            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--color-meta'),
-            borderDash: [6, 4],
-            tension: 0,
-            fill: false
-          }
-        ]
+          metaMes ? {
+            label: 'Meta Atingida',
+            data: labels.map(m => m === metaMes ? saldoReal[labels.indexOf(m)] : null),
+            borderColor: '#16a34a',
+            backgroundColor: '#16a34a',
+            pointRadius: 8,
+            pointHoverRadius: 10,
+            showLine: false
+          } : null
+        ].filter(Boolean)
       },
       options: {
         responsive: true,
+        maintainAspectRatio: true,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: { display: true, text: 'Valor (R$)' },
+            ticks: { callback: value => moeda(value) }
+          }
+        },
         plugins: {
-          legend: {
-            position: 'top'
+          legend: { position: 'top', labels: { usePointStyle: true } },
+          tooltip: { 
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + moeda(context.parsed.y);
+              }
+            }
           }
         }
       }
     });
+
+    const alerta = document.getElementById('alerta');
+    alerta.style.display = tipoAporte === 'nominal' ? 'block' : 'none';
+    alerta.innerText = '⚠️ Atenção: Você escolheu Aporte Nominal. Com o tempo, seu esforço real de poupança diminuirá devido à inflação.';
+
+    const meta = document.getElementById('meta');
+    meta.style.display = 'block';
+    meta.innerText = metaMes ? `🎯 Meta atingida! Você completa sua reserva no mês ${metaMes}.` : '❌ Com os parâmetros atuais, a reserva não é atingida no prazo simulado.';
+
+  } catch (e) {
+    console.error('Erro na simulação', e);
+    alert('Erro na simulação. Verifique os valores informados.');
+  }
+}
+
+/* ================= PRÉVIA ================= */
+function abrirPrevia() {
+  if (Object.keys(ultimosDados).length === 0) {
+    alert('Por favor, execute uma simulação antes de visualizar o relatório.');
+    return;
+  }
+  preencherPDF();
+  const html = document.getElementById('pdf-content').innerHTML;
+  document.getElementById('previewContainer').innerHTML = html;
+  document.getElementById('previewModal').classList.add('show');
+}
+
+function fecharPrevia() {
+  document.getElementById('previewModal').classList.remove('show');
+}
+
+/* ================= PDF ================= */
+function exportarPDF() {
+  if (Object.keys(ultimosDados).length === 0) {
+    alert('Por favor, execute uma simulação antes de exportar o PDF.');
+    return;
   }
 
-  /* ======== CONSTRUÇÃO DO HTML DO RELATÓRIO ======== */
-  function construirHTMLRelatorio() {
-    const dataAtual = new Date().toLocaleDateString('pt-BR');
-    const graficoImagem = chart ? chart.toBase64Image() : '';
-    const resumoHTML = document.getElementById('resultadosResumo').innerHTML;
-    const tabelaHTML = document.getElementById('tabelaResultados').outerHTML;
+  document.getElementById('loading').classList.add('show');
 
-    return `
-      <div class="pdf-container">
-        <div class="pdf-header">
-          <h1>Relatório da Reserva de Emergência</h1>
-          <p>Data: ${dataAtual}</p>
-        </div>
+  setTimeout(() => {
+    try {
+      preencherPDF();
 
-        <div class="pdf-section">
-          <h3>Resumo da Simulação</h3>
-          <div class="pdf-summary-box">
-            ${resumoHTML}
-          </div>
-        </div>
+      const element = document.getElementById('pdf-content');
+      const opt = {
+        margin: [15, 10, 20, 10],
+        filename: 'Relatorio_Reserva_Emergencia_Educativo.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: false },
+        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+        pagebreak: { mode: ['css', 'legacy'] }
+      };
 
-        <div class="pdf-section">
-          <h3>Gráfico de Evolução</h3>
-          <img src="${graficoImagem}" style="max-width:100%; border:1px solid #e2e8f0; border-radius:8px;" />
-          <div class="pdf-legend" style="margin-top:10px;">
-            <span class="nominal">🟧 Nominal</span>
-            <span class="real">🔵 Real</span>
-            <span class="meta">🟢 Meta</span>
-          </div>
-        </div>
-
-        <div class="pdf-section">
-          <h3>Detalhamento Mensal</h3>
-          ${tabelaHTML}
-        </div>
-
-        <div class="pdf-section pdf-concept">
-          <h3>Conceitos Importantes</h3>
-          <p><strong>Saldo Nominal vs. Saldo Real:</strong> O saldo nominal representa o valor acumulado sem considerar a inflação. O saldo real ajusta esse valor para refletir o poder de compra ao longo do tempo.</p>
-          <p><strong>Aporte Nominal vs. Aporte Real:</strong> O aporte nominal é o valor fixo investido mensalmente. O aporte real ajusta esse valor pela inflação, preservando o poder de compra.</p>
-          <p><strong>Impacto de Choques Inflacionários:</strong> A inflação reduz o poder de compra do dinheiro. Choques inflacionários podem comprometer significativamente o valor real acumulado, mesmo com boas taxas de retorno nominal.</p>
-        </div>
-      </div>
-    `;
-  }
-
-  /* ======== PRÉVIA ======== */
-  function abrirPrevia() {
-    if (!chart) {
-      alert('Por favor, execute a simulação antes de visualizar o relatório.');
-      return;
-    }
-    const html = construirHTMLRelatorio();
-    document.getElementById('previewContainer').innerHTML = html;
-    document.getElementById('previewModal').classList.add('show');
-  }
-
-  function fecharPrevia() {
-    document.getElementById('previewModal').classList.remove('show');
-  }
-
-  /* ======== PDF ======== */
-  function gerarPDF() {
-    if (!chart) {
-      alert('Por favor, execute a simulação antes de gerar o relatório.');
-      return;
-    }
-
-    document.getElementById('loading').classList.add('show');
-
-    const html = construirHTMLRelatorio();
-    const container = document.createElement('div');
-    container.innerHTML = html;
-    container.style.position = 'fixed';
-    container.style.left = '-9999px';
-    container.style.top = '0';
-    document.body.appendChild(container);
-
-    const opt = {
-      margin: 12,
-      filename: 'Relatorio_Reserva_Emergencia.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(container).save().then(() => {
-      document.body.removeChild(container);
+      html2pdf().set(opt).from(element).save();
+      
       document.getElementById('loading').classList.remove('show');
-    }).catch(e => {
-      document.body.removeChild(container);
+      alert('✅ Relatório PDF gerado com sucesso!');
+    } catch (e) {
       document.getElementById('loading').classList.remove('show');
       console.error('Erro ao gerar PDF:', e);
       alert('Erro ao gerar o PDF. Tente novamente.');
-    });
-  }
+    }
+  }, 100);
+}
 
-  window.addEventListener('load', () => {
-    calcular();
-  });
+function preencherPDF() {
+  const agora = new Date();
+  document.getElementById('pdf-date').innerText = `Gerado em: ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR')}`;
+  document.getElementById('pdf-params').innerText = `Simulação com Aporte ${ultimosDados.tipoAporte === 'nominal' ? 'Nominal' : 'Real'}`;
+  document.getElementById('pdf-summary').innerText = document.getElementById('reservaValor').innerText;
+  document.getElementById('pdf-choque-val').innerText = ultimosDados.choque;
+  document.getElementById('pdf-choque-meses').innerText = ultimosDados.choqueMeses;
+  document.getElementById('pdf-conclusao').innerText = document.getElementById('meta').innerText;
+  document.getElementById('pdf-footer-date').innerText = agora.toLocaleDateString('pt-BR');
+
+  // Incorporar gráfico como imagem
+  if (chart) {
+    const img = chart.toBase64Image();
+    document.getElementById('pdf-chart-img').src = img;
+  }
+}
+
+window.addEventListener('load', () => {
+  calcular();
+});
 </script>
 
 </body>
