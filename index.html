@@ -28,6 +28,7 @@
 <h1>🛡 Simulador de Reserva de Emergência</h1>
 
 <div class="grid">
+<!-- Campos de simulação -->
   <div><label>Saldo inicial (R$)</label><input id="saldoInput" type="number" value="10000"></div>
   <div><label>Gasto mensal atual (R$)</label><input id="gastoInput" type="number" value="3000"></div>
   <div><label>Meses de reserva</label><input id="mesesInput" type="number" value="6"></div>
@@ -40,15 +41,16 @@
   </div>
   <div><label>Inflação anual (%)</label><input id="ipcaInput" type="number" value="4"></div>
   <div><label>CDI / Selic anual (%)</label><input id="cdiInput" type="number" value="10"></div>
-  <div><label>Choque inflacionário (%)</label><input id="choqueInput" type="number" value="12"></div>
-  <div><label>Duração do choque (meses)</label><input id="choqueMesesInput" type="number" value="6"></div>
+  <div><label>Choque inflacionário (%)</label><input id="choqueInput" type="number" value="12"><small>Inflação excepcional acima do normal (ex.: crises, choques econômicos).</small></div>
+  <div><label>Duração do choque (meses)</label><input id="choqueMesesInput" type="number" value="6"><small>Por quantos meses a inflação elevada permanece antes de normalizar.</small></div>
   <div><label>Perda de renda</label>
-    <select id="perdaInput">
-      <option value="0">Nenhuma</option>
-      <option value="0.5">Parcial (50%)</option>
-      <option value="1">Total</option>
-    </select>
-  </div>
+<select id="perdaInput">
+<option value="0">Nenhuma</option>
+<option value="0.5">Parcial (50%)</option>
+<option value="1">Total</option>
+</select>
+<small>Simula redução da capacidade de aporte durante a emergência.</small>
+</div>
   <div><label>Mostrar +6 meses após meta</label>
     <select id="extraMeses">
       <option value="0">Não</option>
@@ -160,8 +162,8 @@ function calcular(){
     chart=new Chart(ctx,{
       type:'line',
       data:{labels,datasets:[
-        {label:'Saldo nominal',data:saldoNominal,yAxisID:'yNominal',borderColor:'#f97316',borderDash:[6,6]},
-        {label:'Saldo real',data:saldoReal,yAxisID:'yReal',borderColor:'#2563eb',borderWidth:3},
+        {label:'Saldo nominal (ilusão)',data:saldoNominal,yAxisID:'yNominal',borderColor:'#fb923c',backgroundColor:'#fb923c',borderDash:[6,6]},
+        {label:'Saldo real (realidade)',data:saldoReal,yAxisID:'yReal',borderColor:'#2563eb',backgroundColor:'#2563eb',borderWidth:3},
         metaMes?{label:'Meta',data:labels.map(m=>m===metaMes?reservaNecessaria:null),yAxisID:'yReal',borderColor:'#16a34a',borderWidth:2,pointRadius:0}:null
       ].filter(Boolean)},
       options:{responsive:true,scales:{
@@ -185,10 +187,23 @@ function calcular(){
 }
 
 function exportarPDF(){
-  try{window.print();}catch(e){console.error(e)}
+  const bloco=document.createElement('div');
+  bloco.innerHTML=`<h2>Relatório da Simulação de Reserva de Emergência</h2>
+  <p><strong>Saldo nominal:</strong> valores sem desconto da inflação, podendo gerar ilusão de crescimento.</p>
+  <p><strong>Saldo real:</strong> valores corrigidos pela inflação, representando o poder de compra.</p>
+  <p><strong>Aporte nominal:</strong> valor fixo que perde força com a inflação.</p>
+  <p><strong>Aporte real:</strong> valor corrigido pela inflação, mantendo esforço financeiro.</p>
+  <p><strong>Choque inflacionário:</strong> período temporário de inflação elevada.</p>
+  <p><strong>Duração do choque:</strong> tempo de permanência da inflação acima do normal.</p>
+  <p><strong>Perda de renda:</strong> simulação de redução parcial ou total da capacidade de aporte.</p>`;
+  document.body.prepend(bloco);
+  window.print();
+  bloco.remove();
+}catch(e){console.error(e)}
 }
 
 window.addEventListener('load',()=>{try{calcular();}catch(e){console.error(e)}});
 </script>
 </body>
 </html>
+
