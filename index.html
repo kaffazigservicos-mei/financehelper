@@ -3,71 +3,197 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reserva de Emergência</title>
+  <title>Reserva de Emergência – Simulador Avançado</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;margin:0;padding:20px}
-    .app{max-width:420px;margin:auto;background:#fff;padding:20px;border-radius:12px}
-    label{display:block;margin-top:12px;font-weight:bold}
-    input,button{width:100%;padding:10px;margin-top:6px}
-    button{background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:16px}
-    .result{margin-top:20px;background:#eef2ff;padding:15px;border-radius:10px}
-    .ok{color:#16a34a;font-weight:bold}
-    .bad{color:#dc2626;font-weight:bold}
+    body { font-family: Arial, sans-serif; background:#f4f7fb; margin:0; padding:20px; }
+    .app { max-width:900px; margin:auto; background:#fff; padding:20px; border-radius:12px; }
+    h1 { text-align:center; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    label { font-size:13px; font-weight:bold; }
+    input, select { padding:8px; width:100%; }
+    button { padding:12px; margin-top:10px; font-weight:bold; cursor:pointer; }
+    .alert { background:#fff3cd; padding:10px; border-radius:8px; margin-top:10px; }
+    .ok { background:#dcfce7; }
+    .reserva { background:#e0f2fe; padding:12px; border-radius:8px; margin-top:10px; font-weight:bold; }
+    canvas { margin-top:20px; }
+    table { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
+    th, td { border:1px solid #ddd; padding:6px; text-align:right; }
+    th { background:#f1f5f9; }
+    .meta-row { background:#dcfce7; font-weight:bold; }
   </style>
 </head>
 <body>
 <div class="app">
-  <h2>Reserva de Emergência</h2>
+<h1>🛡 Simulador de Reserva de Emergência</h1>
 
-  <label>Gasto mensal (R$)</label>
-  <input id="gasto" type="number" />
+<div class="grid">
+  <div><label>Saldo inicial (R$)</label><input id="saldoInput" type="number" value="10000"></div>
+  <div><label>Gasto mensal atual (R$)</label><input id="gastoInput" type="number" value="3000"></div>
+  <div><label>Meses de reserva</label><input id="mesesInput" type="number" value="6"></div>
+  <div><label>Aporte mensal (R$)</label><input id="aporteInput" type="number" value="500"></div>
+  <div><label>Tipo de aporte</label>
+    <select id="tipoAporteInput">
+      <option value="nominal">Nominal (fixo)</option>
+      <option value="real">Real (corrigido pela inflação)</option>
+    </select>
+  </div>
+  <div><label>Inflação anual (%)</label><input id="ipcaInput" type="number" value="4"></div>
+  <div><label>CDI / Selic anual (%)</label><input id="cdiInput" type="number" value="10"></div>
+  <div><label>Choque inflacionário (%)</label><input id="choqueInput" type="number" value="12"></div>
+  <div><label>Duração do choque (meses)</label><input id="choqueMesesInput" type="number" value="6"></div>
+  <div><label>Perda de renda</label>
+    <select id="perdaInput">
+      <option value="0">Nenhuma</option>
+      <option value="0.5">Parcial (50%)</option>
+      <option value="1">Total</option>
+    </select>
+  </div>
+  <div><label>Mostrar +6 meses após meta</label>
+    <select id="extraMeses">
+      <option value="0">Não</option>
+      <option value="6">Sim</option>
+    </select>
+  </div>
+</div>
 
-  <label>Meses de cobertura</label>
-  <input id="meses" type="number" />
+<button onclick="calcular()">Simular</button>
 
-  <label>Saldo atual (R$)</label>
-  <input id="saldo" type="number" />
+<div id="reservaValor" class="reserva" style="display:none"></div>
+<div id="alerta" class="alert" style="display:none"></div>
+<div id="meta" class="alert ok" style="display:none"></div>
 
-  <label>Aporte mensal (R$)</label>
-  <input id="aporte" type="number" />
+<h3>📊 Evolução do Saldo</h3>
+<p><strong>Eixo esquerdo:</strong> valores nominais (ilusão monetária).<br>
+<strong>Eixo direito:</strong> valores reais (poder de compra).</p>
+<canvas id="grafico"></canvas>
 
-  <label>Inflação mensal (%)</label>
-  <input id="inflacao" type="number" step="0.01" />
+<h3>📚 Entenda o que você está vendo</h3>
+<section>
+<p><strong>Saldo nominal</strong> cresce olhando apenas números, sem descontar inflação. Ele pode dar a falsa sensação de progresso.</p>
+<p><strong>Saldo real</strong> mostra o verdadeiro poder de compra, corrigido pela inflação. É este que determina se a reserva é suficiente.</p>
+<p>Quando o aporte é <strong>nominal</strong>, a inflação corrói o esforço mensal. No modo <strong>real</strong>, o aporte acompanha a inflação.</p>
+</section>
 
-  <button onclick="calcular()">Calcular</button>
+<table id="tabela"></table>
 
-  <div id="resultado" class="result"></div>
+<button onclick="exportarPDF()">📄 Exportar PDF</button>
 </div>
 
 <script>
-function brl(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+let chart;
+const moeda = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
 function calcular(){
-  const gasto=+document.getElementById('gasto').value
-  const meses=+document.getElementById('meses').value
-  const saldo=+document.getElementById('saldo').value
-  const aporte=+document.getElementById('aporte').value
-  const inflacao=(+document.getElementById('inflacao').value)/100
+  const saldoInicial = Number(document.getElementById('saldoInput').value);
+  const gastoBase = Number(document.getElementById('gastoInput').value);
+  const mesesReserva = Number(document.getElementById('mesesInput').value);
+  const aporteBase = Number(document.getElementById('aporteInput').value);
+  const tipoAporte = document.getElementById('tipoAporteInput').value;
+  const ipca = Number(document.getElementById('ipcaInput').value)/100/12;
+  const cdi = Number(document.getElementById('cdiInput').value)/100/12;
+  const choque = Number(document.getElementById('choqueInput').value)/100/12;
+  const choqueMeses = Number(document.getElementById('choqueMesesInput').value);
+  const perda = Number(document.getElementById('perdaInput').value);
+  const extraMeses = Number(document.getElementById('extraMeses').value);
 
-  let reserva=0
-  for(let i=1;i<=meses;i++){
-    reserva+=gasto*Math.pow(1+inflacao,i)
+  let saldoAtual = saldoInicial;
+  let reservaNecessaria = 0;
+  let labels=[], saldoNominal=[], saldoReal=[];
+  let metaMes = null;
+
+  let tabelaHTML='<tr><th>Mês</th><th>Gasto corrigido</th><th>Saldo nominal</th><th>Saldo real</th></tr>';
+
+  let i=1;
+  const LIMITE=120;
+  while(i<=LIMITE){
+    const inflacaoMes = i<=choqueMeses ? choque : ipca;
+    const gastoCorrigido = gastoBase*Math.pow(1+inflacaoMes,i);
+    if(i<=mesesReserva) reservaNecessaria += gastoCorrigido;
+
+    let aporteMes = aporteBase;
+    if(tipoAporte==='real') aporteMes*=Math.pow(1+inflacaoMes,i);
+    if(perda>0 && i<=mesesReserva) aporteMes*=(1-perda);
+
+    saldoAtual = saldoAtual*(1+cdi)+aporteMes;
+    const saldoRealMes = saldoAtual/Math.pow(1+inflacaoMes,i);
+
+    labels.push(i);
+    saldoNominal.push(saldoAtual);
+    saldoReal.push(saldoRealMes);
+
+    const metaClass = (metaMes===null && saldoRealMes>=reservaNecessaria) ? 'meta-row':'';
+    tabelaHTML+=`<tr class="${metaClass}"><td>${i}</td><td>${moeda(gastoCorrigido)}</td><td>${moeda(saldoAtual)}</td><td>${moeda(saldoRealMes)}</td></tr>`;
+
+    if(metaMes===null && saldoRealMes>=reservaNecessaria){
+      metaMes=i;
+      if(extraMeses===0) break;
+    }
+
+    if(metaMes!==null && i>=metaMes+extraMeses) break;
+    i++;
   }
 
-  const saldoProjetado=saldo+(aporte*meses)
+  document.getElementById('tabela').innerHTML=tabelaHTML;
+  document.getElementById('reservaValor').style.display='block';
+  document.getElementById('reservaValor').innerText=`💰 Valor da reserva necessária: ${moeda(reservaNecessaria)}`;
 
-  let html=`<p>Reserva necessária: <b>${brl(reserva)}</b></p>`
-  html+=`<p>Saldo projetado: <b>${brl(saldoProjetado)}</b></p>`
+  if(chart) chart.destroy();
+  chart=new Chart(document.getElementById('grafico'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Saldo nominal (ilusão)',
+          data:saldoNominal,
+          yAxisID:'yNominal',
+          borderDash:[6,6]
+        },
+        {
+          label:'Saldo real (realidade)',
+          data:saldoReal,
+          yAxisID:'yReal',
+          borderWidth:3
+        },
+        metaMes?{
+          label:'Meta atingida',
+          data:labels.map(m=>m===metaMes?Math.max(...saldoNominal):null),
+          yAxisID:'yNominal',
+          borderColor:'green',
+          borderWidth:2,
+          pointRadius:0
+        }:null
+      ].filter(Boolean)
+    },
+    options:{
+      responsive:true,
+      scales:{
+        yNominal:{
+          type:'linear',
+          position:'left',
+          title:{display:true,text:'R$ Nominal'}
+        },
+        yReal:{
+          type:'linear',
+          position:'right',
+          grid:{drawOnChartArea:false},
+          title:{display:true,text:'R$ Real (poder de compra)'}
+        }
+      }
+    }
+  });
 
-  if(saldoProjetado>=reserva){
-    html+=`<p class="ok">Você atinge a reserva 🎉</p>`
-  }else{
-    html+=`<p class="bad">Você NÃO atinge a reserva ❌</p>`
-  }
+  const alerta=document.getElementById('alerta');
+  alerta.style.display= tipoAporte==='nominal'?'block':'none';
+  alerta.innerText='⚠️ Aporte nominal pode criar ilusão de progresso. A inflação reduz o poder de compra.';
 
-  document.getElementById('resultado').innerHTML=html
+  const meta=document.getElementById('meta');
+  meta.style.display='block';
+  meta.innerText=metaMes?`🎯 Você atinge a reserva no mês ${metaMes}`:'❌ Reserva não atingida';
 }
+
+function exportarPDF(){window.print();}
 </script>
 </body>
 </html>
