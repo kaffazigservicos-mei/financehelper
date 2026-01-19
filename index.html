@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reserva de Emergência – Simulador Avançado</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <style>
     body { font-family: Arial, sans-serif; background:#f4f7fb; margin:0; padding:20px; }
     .app { max-width:900px; margin:auto; background:#fff; padding:20px; border-radius:12px; }
@@ -72,7 +72,12 @@
 <section>
 <p><strong>Saldo nominal</strong> cresce olhando apenas números, sem descontar inflação. Ele pode dar a falsa sensação de progresso.</p>
 <p><strong>Saldo real</strong> mostra o verdadeiro poder de compra, corrigido pela inflação. É este que determina se a reserva é suficiente.</p>
-<p>Quando o aporte é <strong>nominal</strong>, a inflação corrói o esforço mensal. No modo <strong>real</strong>, o aporte acompanha a inflação.</p>
+<p><strong>Aporte nominal</strong>: valor fixo ao longo do tempo. Com inflação, o esforço real diminui (ilusão monetária).</p>
+<p><strong>Aporte real</strong>: o valor do aporte é corrigido pela inflação, preservando o esforço financeiro.</p>
+<hr>
+<p><strong>Choque inflacionário</strong>: simula um período excepcional de inflação alta (ex.: crises, desvalorização cambial).</p>
+<p><strong>Duração do choque</strong>: quantos meses a inflação elevada permanece antes de voltar ao patamar normal.</p>
+<p><strong>Perda de renda</strong>: simula redução parcial ou total da capacidade de aportar durante a emergência.</p>
 </section>
 
 <table id="tabela"></table>
@@ -81,119 +86,109 @@
 </div>
 
 <script>
+'use strict';
+
 let chart;
-const moeda = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const moeda = v => isFinite(v)
+  ? v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+  : '—';
 
 function calcular(){
-  const saldoInicial = Number(document.getElementById('saldoInput').value);
-  const gastoBase = Number(document.getElementById('gastoInput').value);
-  const mesesReserva = Number(document.getElementById('mesesInput').value);
-  const aporteBase = Number(document.getElementById('aporteInput').value);
-  const tipoAporte = document.getElementById('tipoAporteInput').value;
-  const ipca = Number(document.getElementById('ipcaInput').value)/100/12;
-  const cdi = Number(document.getElementById('cdiInput').value)/100/12;
-  const choque = Number(document.getElementById('choqueInput').value)/100/12;
-  const choqueMeses = Number(document.getElementById('choqueMesesInput').value);
-  const perda = Number(document.getElementById('perdaInput').value);
-  const extraMeses = Number(document.getElementById('extraMeses').value);
+  try{
+    const saldoInicial = Number(document.getElementById('saldoInput')?.value)||0;
+    const gastoBase = Number(document.getElementById('gastoInput')?.value)||0;
+    const mesesReserva = Number(document.getElementById('mesesInput')?.value)||0;
+    const aporteBase = Number(document.getElementById('aporteInput')?.value)||0;
+    const tipoAporte = document.getElementById('tipoAporteInput')?.value||'nominal';
+    const ipca = (Number(document.getElementById('ipcaInput')?.value)||0)/100/12;
+    const cdi = (Number(document.getElementById('cdiInput')?.value)||0)/100/12;
+    const choque = (Number(document.getElementById('choqueInput')?.value)||0)/100/12;
+    const choqueMeses = Number(document.getElementById('choqueMesesInput')?.value)||0;
+    const perda = Number(document.getElementById('perdaInput')?.value)||0;
+    const extraMeses = Number(document.getElementById('extraMeses')?.value)||0;
 
-  let saldoAtual = saldoInicial;
-  let reservaNecessaria = 0;
-  let labels=[], saldoNominal=[], saldoReal=[];
-  let metaMes = null;
+    let saldoAtual = saldoInicial;
+    let reservaNecessaria = 0;
+    let labels=[], saldoNominal=[], saldoReal=[];
+    let metaMes = null;
 
-  let tabelaHTML='<tr><th>Mês</th><th>Gasto corrigido</th><th>Saldo nominal</th><th>Saldo real</th></tr>';
+    let tabelaHTML='<tr><th>Mês</th><th>Gasto corrigido</th><th>Saldo nominal</th><th>Saldo real</th></tr>';
 
-  let i=1;
-  const LIMITE=120;
-  while(i<=LIMITE){
-    const inflacaoMes = i<=choqueMeses ? choque : ipca;
-    const gastoCorrigido = gastoBase*Math.pow(1+inflacaoMes,i);
-    if(i<=mesesReserva) reservaNecessaria += gastoCorrigido;
+    let i=1;
+    const LIMITE=180;
+    while(i<=LIMITE){
+      const inflacaoMes = i<=choqueMeses ? choque : ipca;
+      const gastoCorrigido = gastoBase*Math.pow(1+inflacaoMes,i);
+      if(i<=mesesReserva) reservaNecessaria += gastoCorrigido;
 
-    let aporteMes = aporteBase;
-    if(tipoAporte==='real') aporteMes*=Math.pow(1+inflacaoMes,i);
-    if(perda>0 && i<=mesesReserva) aporteMes*=(1-perda);
+      let aporteMes = aporteBase;
+      if(tipoAporte==='real') aporteMes*=Math.pow(1+inflacaoMes,i);
+      if(perda>0 && i<=mesesReserva) aporteMes*=(1-perda);
 
-    saldoAtual = saldoAtual*(1+cdi)+aporteMes;
-    const saldoRealMes = saldoAtual/Math.pow(1+inflacaoMes,i);
+      saldoAtual = saldoAtual*(1+cdi)+aporteMes;
+      const saldoRealMes = saldoAtual/Math.pow(1+inflacaoMes,i);
 
-    labels.push(i);
-    saldoNominal.push(saldoAtual);
-    saldoReal.push(saldoRealMes);
+      labels.push(i);
+      saldoNominal.push(saldoAtual);
+      saldoReal.push(saldoRealMes);
 
-    const metaClass = (metaMes===null && saldoRealMes>=reservaNecessaria) ? 'meta-row':'';
-    tabelaHTML+=`<tr class="${metaClass}"><td>${i}</td><td>${moeda(gastoCorrigido)}</td><td>${moeda(saldoAtual)}</td><td>${moeda(saldoRealMes)}</td></tr>`;
+      const metaClass = (metaMes===null && saldoRealMes>=reservaNecessaria) ? 'meta-row':'';
+      tabelaHTML+=`<tr class="${metaClass}"><td>${i}</td><td>${moeda(gastoCorrigido)}</td><td>${moeda(saldoAtual)}</td><td>${moeda(saldoRealMes)}</td></tr>`;
 
-    if(metaMes===null && saldoRealMes>=reservaNecessaria){
-      metaMes=i;
-      if(extraMeses===0) break;
-    }
-
-    if(metaMes!==null && i>=metaMes+extraMeses) break;
-    i++;
-  }
-
-  document.getElementById('tabela').innerHTML=tabelaHTML;
-  document.getElementById('reservaValor').style.display='block';
-  document.getElementById('reservaValor').innerText=`💰 Valor da reserva necessária: ${moeda(reservaNecessaria)}`;
-
-  if(chart) chart.destroy();
-  chart=new Chart(document.getElementById('grafico'),{
-    type:'line',
-    data:{
-      labels,
-      datasets:[
-        {
-          label:'Saldo nominal (ilusão)',
-          data:saldoNominal,
-          yAxisID:'yNominal',
-          borderDash:[6,6]
-        },
-        {
-          label:'Saldo real (realidade)',
-          data:saldoReal,
-          yAxisID:'yReal',
-          borderWidth:3
-        },
-        metaMes?{
-          label:'Meta atingida',
-          data:labels.map(m=>m===metaMes?Math.max(...saldoNominal):null),
-          yAxisID:'yNominal',
-          borderColor:'green',
-          borderWidth:2,
-          pointRadius:0
-        }:null
-      ].filter(Boolean)
-    },
-    options:{
-      responsive:true,
-      scales:{
-        yNominal:{
-          type:'linear',
-          position:'left',
-          title:{display:true,text:'R$ Nominal'}
-        },
-        yReal:{
-          type:'linear',
-          position:'right',
-          grid:{drawOnChartArea:false},
-          title:{display:true,text:'R$ Real (poder de compra)'}
-        }
+      if(metaMes===null && saldoRealMes>=reservaNecessaria){
+        metaMes=i;
+        if(extraMeses===0) break;
       }
+      if(metaMes!==null && i>=metaMes+extraMeses) break;
+      i++;
     }
-  });
 
-  const alerta=document.getElementById('alerta');
-  alerta.style.display= tipoAporte==='nominal'?'block':'none';
-  alerta.innerText='⚠️ Aporte nominal pode criar ilusão de progresso. A inflação reduz o poder de compra.';
+    document.getElementById('tabela').innerHTML=tabelaHTML;
+    const rv=document.getElementById('reservaValor');
+    rv.style.display='block';
+    rv.innerText=`💰 Valor da reserva necessária: ${moeda(reservaNecessaria)}`;
 
-  const meta=document.getElementById('meta');
-  meta.style.display='block';
-  meta.innerText=metaMes?`🎯 Você atinge a reserva no mês ${metaMes}`:'❌ Reserva não atingida';
+    if(chart){chart.destroy();chart=null;}
+    const ctx=document.getElementById('grafico');
+    if(!ctx) return;
+
+    if(typeof Chart==='undefined'){
+      document.getElementById('alerta').style.display='block';
+      document.getElementById('alerta').innerText='⚠️ Biblioteca de gráfico não carregada no ambiente de prévia. Em navegador real (GitHub Pages/local) o gráfico funciona normalmente.';
+      return;
+    }
+    chart=new Chart(ctx,{
+      type:'line',
+      data:{labels,datasets:[
+        {label:'Saldo nominal',data:saldoNominal,yAxisID:'yNominal',borderColor:'#f97316',borderDash:[6,6]},
+        {label:'Saldo real',data:saldoReal,yAxisID:'yReal',borderColor:'#2563eb',borderWidth:3},
+        metaMes?{label:'Meta',data:labels.map(m=>m===metaMes?reservaNecessaria:null),yAxisID:'yReal',borderColor:'#16a34a',borderWidth:2,pointRadius:0}:null
+      ].filter(Boolean)},
+      options:{responsive:true,scales:{
+        yNominal:{position:'left',title:{display:true,text:'R$ Nominal'}},
+        yReal:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'R$ Real'}}
+      }}
+    );
+
+    const alerta=document.getElementById('alerta');
+    alerta.style.display= tipoAporte==='nominal'?'block':'none';
+    alerta.innerText='⚠️ Aporte nominal pode criar ilusão de progresso.';
+
+    const meta=document.getElementById('meta');
+    meta.style.display='block';
+    meta.innerText=metaMes?`🎯 Você atinge a reserva no mês ${metaMes}`:'❌ Reserva não atingida';
+
+  }catch(e){
+    console.error('Erro na simulação',e);
+    alert('Erro inesperado na simulação. Verifique os valores informados.');
+  }
 }
 
-function exportarPDF(){window.print();}
+function exportarPDF(){
+  try{window.print();}catch(e){console.error(e)}
+}
+
+window.addEventListener('load',()=>{try{calcular();}catch(e){console.error(e)}});
 </script>
 </body>
 </html>
