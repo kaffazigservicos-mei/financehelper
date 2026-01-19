@@ -131,16 +131,25 @@
     function calcular() {
       const gasto = +document.getElementById('gasto').value;
       const meses = +document.getElementById('meses').value;
-      const saldo = +document.getElementById('saldo').value;
+      const saldoInicial = +document.getElementById('saldo').value;
       const aporte = +document.getElementById('aporte').value;
       const ipca = (+document.getElementById('ipca').value || 0) / 100;
 
+      if (!gasto || !meses) {
+        alert('Informe gasto mensal e meses de cobertura');
+        return;
+      }
+
       let reserva = 0;
-      let acumulado = saldo;
+      let saldo = saldoInicial;
+      let mesAtinge = null;
 
       for (let i = 1; i <= meses; i++) {
         reserva += gasto * Math.pow(1 + ipca, i);
-        acumulado += aporte;
+        saldo += aporte;
+        if (mesAtinge === null && saldo >= reserva) {
+          mesAtinge = i;
+        }
       }
 
       const res = document.getElementById('resultado');
@@ -150,14 +159,18 @@
         `Reserva necessária: R$ ${reserva.toFixed(2)}`;
 
       const msg = document.getElementById('mensagem');
-      if (acumulado >= reserva) {
-        msg.innerHTML = `<span class="badge ok">Você já atinge a reserva 🎉</span>`;
+      if (saldoInicial >= reserva) {
+        msg.innerHTML = `<span class=\"badge ok\">Você já possui a reserva 🎉</span>`;
+      } else if (mesAtinge !== null) {
+        msg.innerHTML = `<span class=\"badge ok\">Você atinge a reserva no mês ${mesAtinge} 🎯</span>`;
       } else {
-        msg.innerHTML = `<span class="badge warn">Saldo projetado: R$ ${acumulado.toFixed(2)}</span>`;
+        msg.innerHTML = `<span class=\"badge warn\">Saldo projetado após ${meses} meses: R$ ${saldo.toFixed(2)}</span>`;
       }
     }
   </script>
 </body>
 </html>
+
+
 
 
