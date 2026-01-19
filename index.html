@@ -140,7 +140,15 @@
       navigator.serviceWorker.register('sw.js');
     }
 
-    function calcular() {
+    function formatarMoeda(valor) {
+  return valor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2
+  });
+}
+
+function calcular() {
       const gasto = +document.getElementById('gasto').value;
       const meses = +document.getElementById('meses').value;
       const saldoInicial = +document.getElementById('saldo').value;
