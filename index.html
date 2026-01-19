@@ -3,190 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinanceHelper – Reserva de Emergência</title>
-
-  <link rel="manifest" href="manifest.json">
-
+  <title>Reserva de Emergência</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #0f172a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .app {
-      width: 100%;
-      max-width: 420px;
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.25);
-    }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 22px;
-      font-weight: 700;
-    }
-    p.subtitle {
-      margin: 0 0 20px;
-      font-size: 14px;
-      color: #475569;
-    }
-    label {
-      font-size: 13px;
-      font-weight: 600;
-      display: block;
-      margin-bottom: 6px;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #cbd5e1;
-      font-size: 15px;
-      margin-bottom: 14px;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      border: none;
-      background: #2563eb;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 6px;
-    }
-    button:hover { background: #1d4ed8; }
-    .resultado {
-      margin-top: 22px;
-      padding: 18px;
-      border-radius: 16px;
-      background: #f1f5f9;
-    }
-    .resultado strong {
-      display: block;
-      font-size: 18px;
-      margin-bottom: 6px;
-    }
-    .badge {
-      margin-top: 10px;
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .ok { background: #dcfce7; color: #166534; }
-    .warn { background: #ffedd5; color: #9a3412; }
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 16px;
-    }
+    body{font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;margin:0;padding:20px}
+    .app{max-width:420px;margin:auto;background:#fff;padding:20px;border-radius:12px}
+    label{display:block;margin-top:12px;font-weight:bold}
+    input,button{width:100%;padding:10px;margin-top:6px}
+    button{background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:16px}
+    .result{margin-top:20px;background:#eef2ff;padding:15px;border-radius:10px}
+    .ok{color:#16a34a;font-weight:bold}
+    .bad{color:#dc2626;font-weight:bold}
   </style>
 </head>
 <body>
-  <div class="app">
-    <h1>Reserva de Emergência</h1>
-    <p class="subtitle">Planeje sua segurança financeira com projeção inflacionária</p>
+<div class="app">
+  <h2>Reserva de Emergência</h2>
 
-    <label>Gasto mensal (R$)</label>
-    <input id="gasto" type="number" placeholder="Ex: 5500">
+  <label>Gasto mensal (R$)</label>
+  <input id="gasto" type="number" />
 
-    <label>Meses de cobertura</label>
-    <input id="meses" type="number" placeholder="Ex: 6">
+  <label>Meses de cobertura</label>
+  <input id="meses" type="number" />
 
-    <label>Saldo atual disponível (R$)</label>
-    <input id="saldo" type="number" placeholder="Ex: 4000">
+  <label>Saldo atual (R$)</label>
+  <input id="saldo" type="number" />
 
-    <label>Aporte mensal planejado (R$)</label>
-    <input id="aporte" type="number" placeholder="Ex: 550">
+  <label>Aporte mensal (R$)</label>
+  <input id="aporte" type="number" />
 
-    <label>Inflação mensal (%)</label>
-    <input id="ipca" type="number" placeholder="Ex: 0.35">
+  <label>Inflação mensal (%)</label>
+  <input id="inflacao" type="number" step="0.01" />
 
-    <button onclick="calcular()">Calcular Reserva</button>
+  <button onclick="calcular()">Calcular</button>
 
-    <div class="resultado" id="resultado" style="display:none;">
-      <strong id="valor"></strong>
-      <div id="mensagem"></div>
-      <div style="margin-top:14px; overflow-x:auto;">
-        <table id="tabela" style="width:100%; font-size:13px; border-collapse:collapse;">
-          <thead>
-            <tr style="background:#e2e8f0;">
-              <th style="padding:6px; text-align:left;">Mês</th>
-              <th style="padding:6px; text-align:right;">Reserva acumulada</th>
-              <th style="padding:6px; text-align:right;">Saldo projetado</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
+  <div id="resultado" class="result"></div>
+</div>
 
-    <footer>FinanceHelper © 2026</footer>FinanceHelper © 2026</footer>
-  </div>
+<script>
+function brl(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
+function calcular(){
+  const gasto=+document.getElementById('gasto').value
+  const meses=+document.getElementById('meses').value
+  const saldo=+document.getElementById('saldo').value
+  const aporte=+document.getElementById('aporte').value
+  const inflacao=(+document.getElementById('inflacao').value)/100
 
-    function formatarMoeda(valor) {
-  return valor.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2
-  });
+  let reserva=0
+  for(let i=1;i<=meses;i++){
+    reserva+=gasto*Math.pow(1+inflacao,i)
+  }
+
+  const saldoProjetado=saldo+(aporte*meses)
+
+  let html=`<p>Reserva necessária: <b>${brl(reserva)}</b></p>`
+  html+=`<p>Saldo projetado: <b>${brl(saldoProjetado)}</b></p>`
+
+  if(saldoProjetado>=reserva){
+    html+=`<p class="ok">Você atinge a reserva 🎉</p>`
+  }else{
+    html+=`<p class="bad">Você NÃO atinge a reserva ❌</p>`
+  }
+
+  document.getElementById('resultado').innerHTML=html
 }
-
-function calcular() {
-      const gasto = +document.getElementById('gasto').value;
-      const meses = +document.getElementById('meses').value;
-      const saldoInicial = +document.getElementById('saldo').value;
-      const aporte = +document.getElementById('aporte').value;
-      const ipca = (+document.getElementById('ipca').value || 0) / 100;
-
-      if (!gasto || !meses) {
-        alert('Informe gasto mensal e meses de cobertura');
-        return;
-      }
-
-      let reserva = 0;
-      let saldo = saldoInicial;
-      let mesAtinge = null;
-
-      for (let i = 1; i <= meses; i++) {
-        reserva += gasto * Math.pow(1 + ipca, i);
-        saldo += aporte;
-        if (mesAtinge === null && saldo >= reserva) {
-          mesAtinge = i;
-        }
-      }
-
-      const res = document.getElementById('resultado');
-      res.style.display = 'block';
-
-      document.getElementById('valor').innerText =
-        `Reserva necessária: R$ ${reserva.toFixed(2)}`;
-
-      const msg = document.getElementById('mensagem');
-      if (saldoInicial >= reserva) {
-        msg.innerHTML = `<span class=\"badge ok\">Você já possui a reserva 🎉</span>`;
-      } else if (mesAtinge !== null) {
-        msg.innerHTML = `<span class=\"badge ok\">Você atinge a reserva no mês ${mesAtinge} 🎯</span>`;
-      } else {
-        msg.innerHTML = `<span class=\"badge warn\">Saldo projetado após ${meses} meses: R$ ${saldo.toFixed(2)}</span>`;
-      }
-    }
-  </script>
+</script>
 </body>
 </html>
